@@ -1,0 +1,159 @@
+import random
+d={}
+def add():
+    d1={}
+    try:
+        room_number=int(input('Please enter room number\n'))
+        fname,lname=input('Please enter full name\n').split(' ')
+        contact=int(input('Enter Mobile Number\n'))
+        advance=int(input('Please enter advance submitted\n'))
+        rent=int(input('Please enter rent\n'))
+        password=random.randint(1000,9999)
+        d1['fname']=fname
+        d1['lname']=lname
+        d1['advance']=advance
+        d1['rent']=rent
+        d1['Contact']=contact
+        d1['remaning']=0
+        d1['password']=password
+        d[room_number]=d1
+    except:
+        print('\nInvalid Data !!!')
+    
+def show_data():
+    print('Room\t'+'Name\t\t'+'Contact\t\t'+'Advance\t\t'+'Rent\t\t'+'Remaning\t'+'Password\t'+'\n')
+    for i in d.keys():
+        print(i,end='\t')
+        print(d[i]['fname'],d[i]['lname'],end='\t')
+        print(d[i]['Contact'],end='\t')
+        print(d[i]['advance'],end='\t\t')
+        print(d[i]['rent'],end='\t\t')
+        print(d[i]['remaning'],end='\t\t')
+        print(d[i]['password'],end='\n')
+        
+def modify():
+    def name():
+        try:
+            fname,lname=input('Enter Updated Name\n').split(' ')
+            d[x]['fname']=fname
+            d[x]['lname']=lname
+        except:
+            print('Please Enter Valid Information !!!')
+        
+    def advance():
+        try:
+            new_advance=int(input('Enter Updated Advance Value\n'))
+            d[x]['advance']=new_advance
+        except:
+            print('Please Enter Valid Information !!!')
+  
+    def remaning():
+        try:
+            r=int(input('Enter value to add in remaning\n'))
+            d[x]['remaning']+=r
+        except:
+            print('Please Enter Valid Information !!!')
+    
+    def rent():
+        try:
+            r=int(input('Enter New Rent Value\n'))
+            d[x]['rent']=r
+        except:
+            print('Please Enter Valid Information !!!')
+        
+    def contact():
+        try:
+            contact=int(input('Please Enter Updated Contact Details\n'))
+            d[x]['Contact']=contact
+        except:
+            print('Please Enter Valid Information !!!')
+    def password():
+        new_pass=random.randint(1000,9999)
+        d[x]['password']=new_pass
+        
+    x=int(input('Please Enter Room Number For Modify Their Data\n'))
+    if x in d.keys():
+        print('\n1.Name\n2.Contact\n3.Advance\n4.Rent\n5.Update Remaning Value\n6.Password\n')
+        switcher={
+            1:name,
+            2:contact,
+            3:advance,
+            4:rent,
+            5:remaning,
+            6:password,
+        }
+        def switch(option):
+            return switcher.get(option)()
+
+        y=int(input('Enter Above Option Number Here\n'))
+        switch(y)
+    else:
+        print('\nEnter Valid Information !!!')
+    
+            
+ def login():
+    def admin_login():
+        #print('\n\nLoged in as admin\n\n')
+        try:
+            username=input('Enter Username\n')
+            password=int(input('Enter Password\n'))
+            if username=='Salve45' and password==1627:
+                #print('\n\nLoged in as admin\n\n')
+                def Add():
+                    add()
+                def Show():
+                    show_data()
+                def Modify():
+                    modify()
+                    
+                Switcher={
+                    1:Add,
+                    2:Show,
+                    3:Modify,
+                }
+                def Switch(option):
+                    return Switcher.get(option)()
+                
+                print('1.Add Data\n2.Show_Data\n3.Modify Data\n')
+                y=int(input('Enter Option\n'))
+                Switch(y)
+                #print('\n')
+                #show_data()
+            else:
+                print('\nInvalid Username And Password !!!')
+        except:
+            print('\nInvalid Information !!!')
+    
+    def user_login():
+        #print('\n\nLoged in as user\n\n')
+        try:
+            x=int(input('Enter Room Number\n'))
+            password=int(input('Enter Password\n'))
+            if d[x]['password']==password:
+                print('Room\t'+'Name\t\t'+'Contact\t\t'+'Advance\t\t'+'Rent\t\t'+'Remaning\t'+'\n')
+                print(x,end='\t')
+                print(d[x]['fname'],d[x]['lname'],end='\t')
+                print(d[x]['Contact'],end='\t')
+                print(d[x]['advance'],end='\t\t')
+                print(d[x]['rent'],end='\t\t')
+                print(d[x]['remaning'],end='\t\t')
+                #print(d[i]['password'],end='\n')
+                
+            else:
+                print('\nInvalid Password !!!')
+        except:
+            print('\nInvalid Information !!!')
+    
+    switcher={
+        1:admin_login,
+        2:user_login,
+    }
+    def switch(option):
+        return switcher.get(option)()
+    print('1.Admin Login\n2.User Login\n')
+    y=int(input('Enter Option For Login\n'))
+    switch(y)
+    
+login()
+    
+    
