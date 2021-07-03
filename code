@@ -1,159 +1,164 @@
+import mysql.connector
 import random
-d={}
-def add():
-    d1={}
-    try:
-        room_number=int(input('Please enter room number\n'))
-        fname,lname=input('Please enter full name\n').split(' ')
-        contact=int(input('Enter Mobile Number\n'))
-        advance=int(input('Please enter advance submitted\n'))
-        rent=int(input('Please enter rent\n'))
-        password=random.randint(1000,9999)
-        d1['fname']=fname
-        d1['lname']=lname
-        d1['advance']=advance
-        d1['rent']=rent
-        d1['Contact']=contact
-        d1['remaning']=0
-        d1['password']=password
-        d[room_number]=d1
-    except:
-        print('\nInvalid Data !!!')
-    
-def show_data():
-    print('Room\t'+'Name\t\t'+'Contact\t\t'+'Advance\t\t'+'Rent\t\t'+'Remaning\t'+'Password\t'+'\n')
-    for i in d.keys():
-        print(i,end='\t')
-        print(d[i]['fname'],d[i]['lname'],end='\t')
-        print(d[i]['Contact'],end='\t')
-        print(d[i]['advance'],end='\t\t')
-        print(d[i]['rent'],end='\t\t')
-        print(d[i]['remaning'],end='\t\t')
-        print(d[i]['password'],end='\n')
-        
-def modify():
-    def name():
-        try:
-            fname,lname=input('Enter Updated Name\n').split(' ')
-            d[x]['fname']=fname
-            d[x]['lname']=lname
-        except:
-            print('Please Enter Valid Information !!!')
-        
-    def advance():
-        try:
-            new_advance=int(input('Enter Updated Advance Value\n'))
-            d[x]['advance']=new_advance
-        except:
-            print('Please Enter Valid Information !!!')
-  
-    def remaning():
-        try:
-            r=int(input('Enter value to add in remaning\n'))
-            d[x]['remaning']+=r
-        except:
-            print('Please Enter Valid Information !!!')
-    
-    def rent():
-        try:
-            r=int(input('Enter New Rent Value\n'))
-            d[x]['rent']=r
-        except:
-            print('Please Enter Valid Information !!!')
-        
-    def contact():
-        try:
-            contact=int(input('Please Enter Updated Contact Details\n'))
-            d[x]['Contact']=contact
-        except:
-            print('Please Enter Valid Information !!!')
-    def password():
-        new_pass=random.randint(1000,9999)
-        d[x]['password']=new_pass
-        
-    x=int(input('Please Enter Room Number For Modify Their Data\n'))
-    if x in d.keys():
-        print('\n1.Name\n2.Contact\n3.Advance\n4.Rent\n5.Update Remaning Value\n6.Password\n')
-        switcher={
-            1:name,
-            2:contact,
-            3:advance,
-            4:rent,
-            5:remaning,
-            6:password,
-        }
-        def switch(option):
-            return switcher.get(option)()
 
-        y=int(input('Enter Above Option Number Here\n'))
-        switch(y)
+
+myconn=mysql.connector.connect(host = "localhost",user = "root", passwd= "Rohit@123", database="rent")
+
+mycursor=myconn.cursor()
+
+#mycursor.execute("create table customer(name varchar(20) not null,room_no int(10) not null primary key)")
+#mycursor.execute("alter table customer add column mobile_no long after age ")
+#mycursor.execute("alter table customer drop column room_no")
+#myconn.commit()
+
+def update_info(choice,u_room_no):
+    if choice==1:
+        n_name=input("\nEnter Updated Name\t")
+        sql="update customer set name=%s where room_no=%s"
+        val=(n_name,u_room_no)
+        mycursor.execute(sql,val)
+        myconn.commit()
+    elif choice==2:
+        n_age=int(input('\nEnter Updated Age\t'))
+        sql="update customer set age=%s where room_no=%s"
+        val=(n_age,u_room_no)
+        mycursor.execute(sql,val)
+        myconn.commit()
+    elif choice==3:
+        n_per=input('\nEnter Updated Permanent Address\t')
+        sql="update customer set permanent_address=%s where room_no=%s"
+        val=(n_per,u_room_no)
+        mycursor.execute(sql,val)
+        myconn.commit()
+    elif choice==4:
+        n_adv=int(input('\nEnter Updated Advance\t'))
+        sql="update customer set advance=%s where room_no=%s"
+        val=(n_adv,u_room_no)
+        mycursor.execute(sql,val)
+        myconn.commit()
+    elif choice==5:
+        n_mobile=input("Enter Updated Mobile Number\t")
+        sql="update customer set mobile_no=%s where room_no=%s"
+        val=(n_mobile,u_room_no)
+        mycursor.execute(sql,val)
+        myconn.commit()
+
+
+def add_member():
+    try:
+        print("\nAdd New Renter\n")
+        name=input("Enter Name Of Renter\t")
+        room_no=int(input("Enter Room Number\t"))
+        age=int(input("Enter Age Of Renter\t"))
+        mobile_no=input("Enter Mobile Number\t")
+        permanent_address=input('Enter permanent Address\t')
+        advance=int(input("Enter Advance\t"))
+        passwd=random.randint(1000,9999)
+        check=valid_mobile(mobile_no)
+        if check==True:
+            val=(name,room_no,age,mobile_no,permanent_address,advance,passwd)
+            sql="insert into customer(name,room_no,age,mobile_no,permanent_address,advance,passwd) values (%s,%s,%s,%s,%s,%s,%s)"
+            mycursor.execute(sql,val)
+            myconn.commit()
+        else:
+            print("\nInvalid Mobile Number....")
+    except:
+        print("\nSomething Wrong....\n")
+
+def show_admin_database():
+    print("\nALl Renter Information\n")
+    mycursor.execute("SELECT * FROM CUSTOMER")
+    db=mycursor.fetchall()
+    print("\nName\tRoom Number\tAge\tMobile   \tPermanent Address\tAdvance\tPassword\n")
+    for i in db:
+        print("%s       %d          %d      %s      %s                 %d       %s"%(i[0],i[1],i[2],i[3],i[4],i[5],i[6]))
+    myconn.close()
+
+def valid_mobile(no):
+    no=str(no)
+    if len(no)==10 and(no[0] in ('7','8','9')):
+        return True
     else:
-        print('\nEnter Valid Information !!!')
-    
-            
- def login():
-    def admin_login():
-        #print('\n\nLoged in as admin\n\n')
-        try:
-            username=input('Enter Username\n')
-            password=int(input('Enter Password\n'))
-            if username=='Salve45' and password==1627:
-                #print('\n\nLoged in as admin\n\n')
-                def Add():
-                    add()
-                def Show():
-                    show_data()
-                def Modify():
-                    modify()
-                    
-                Switcher={
-                    1:Add,
-                    2:Show,
-                    3:Modify,
-                }
-                def Switch(option):
-                    return Switcher.get(option)()
-                
-                print('1.Add Data\n2.Show_Data\n3.Modify Data\n')
-                y=int(input('Enter Option\n'))
-                Switch(y)
-                #print('\n')
-                #show_data()
-            else:
-                print('\nInvalid Username And Password !!!')
-        except:
-            print('\nInvalid Information !!!')
-    
-    def user_login():
-        #print('\n\nLoged in as user\n\n')
-        try:
-            x=int(input('Enter Room Number\n'))
-            password=int(input('Enter Password\n'))
-            if d[x]['password']==password:
-                print('Room\t'+'Name\t\t'+'Contact\t\t'+'Advance\t\t'+'Rent\t\t'+'Remaning\t'+'\n')
-                print(x,end='\t')
-                print(d[x]['fname'],d[x]['lname'],end='\t')
-                print(d[x]['Contact'],end='\t')
-                print(d[x]['advance'],end='\t\t')
-                print(d[x]['rent'],end='\t\t')
-                print(d[x]['remaning'],end='\t\t')
-                #print(d[i]['password'],end='\n')
-                
-            else:
-                print('\nInvalid Password !!!')
-        except:
-            print('\nInvalid Information !!!')
-    
-    switcher={
-        1:admin_login,
-        2:user_login,
-    }
-    def switch(option):
-        return switcher.get(option)()
-    print('1.Admin Login\n2.User Login\n')
-    y=int(input('Enter Option For Login\n'))
-    switch(y)
-    
-login()
-    
-    
+        return False
+
+def check_number(no,passwd):
+    sql="select count(*) from customer where mobile_no=%s and passwd=%s"
+    val=(no,passwd)
+    mycursor.execute(sql,val)
+    db=mycursor.fetchall()
+    myconn.commit()
+    for x in db:
+        if x[0]==1:
+            return True
+        else:
+            return False
+
+
+def renter():
+    try:
+        no=int(input("Enter Your Registered Mobile Number\t"))
+        passwd=int(input("Enter Your Password\t"))
+        check=check_number(no,passwd)
+
+        if check==True:
+            sql="select * from customer where mobile_no=%s and passwd=%s"
+            val=(no,passwd)
+            mycursor.execute(sql,val)
+            db=mycursor.fetchall()
+            #myconn.commit()
+            for x in db:
+                print("\n\nName\t\t\t",x[0])
+                print("Room Number\t\t",x[1])
+                print("Age\t\t\t",x[2])
+                print("Mobile Number   \t",x[3])
+                print("Permanent Address\t",x[4])
+                print("Advance\t\t\t",x[5])
+        else:
+            print("\nInvalid Username or Password\n")
+    except:
+        print("\nInvalid!!!\n")
+
+def owner():
+    #print("WELCOE")
+    print("\n1.Show All Information\n2.Add Renter\n3.Remove Renter\n4.Update Information\n")
+    choice=int(input("\nSelect Option From Given Above\t"))
+    if choice==1:
+        show_admin_database()
+
+    elif choice==2:
+        add_member()
+
+    elif choice==3:
+        print("\nRemove Renter\n")
+        r_room=int(input("\nEnter Room Number To Remove Renter Information\t"))
+        mycursor.execute("delete from customer where room_no=%s",(r_room,))
+        myconn.commit()
+        myconn.close()
+
+    elif choice==4:
+        print("\nUpdate Renter Information\n")
+        u_room_no=int(input("\nEnter Room Number To Update Renter Information\t"))
+        print("\n1.Name\n2.Age\n3.Permaent Address\n4.Advance\n5.Mobile Number\n")
+        choice=int(input("\nEnter Choice TO Update Information\t"))
+        if 0<choice<6:
+            update_info(choice,u_room_no)
+        else:
+            print("\nInvalid Choice\n")
+
+    else:
+        print('\nPlease Choose Valid Choice\n')
+
+
+def main():
+    print("Welcome to Rent Management System\n1.Admin\n2.Renter\n")
+    choice=int(input("For Login Choose Any Option\t"))
+
+    if choice==1:
+        print("\nConnecting to Admin.....\n".center(20))
+        owner()
+    elif choice==2:
+        print("\nConnecting to Renter....\n".center(20))
+        renter()
+    else:
+        print('\nInvalid Chocie\n')
+main()
